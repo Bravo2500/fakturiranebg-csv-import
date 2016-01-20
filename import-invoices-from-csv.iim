@@ -1,0 +1,32 @@
+﻿VERSION BUILD=8961227 RECORDER=FX
+TAB T=1
+
+' Specify input file (if !COL variables are used, IIM automatically assume a CSV format of the input file
+'CSV = Comma Separated Values in each line of the file
+SET !DATASOURCE yourinvoiceslist.csv
+
+'SET !DATASOURCE_COLUMNS 8
+'Start at line 2 to skip the header in the file
+SET !LOOP 2
+'Increase the current position in the file with each loop 
+SET !DATASOURCE_LINE {{!LOOP}}
+' Fill web form
+
+URL GOTO=https://www.fakturirane.bg/documents/faktura
+TAG POS=1 TYPE=INPUT:BUTTON FORM=NAME:NoFormName ATTR=NAME:action
+TAG POS=1 TYPE=INPUT:TEXT FORM=ID:documentForm ATTR=ID:to_company_name CONTENT={{!COL1}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=ID:documentForm ATTR=ID:to_customer_hash_bulstat CONTENT={{!COL2}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=ID:documentForm ATTR=ID:office_name CONTENT=OFFICE<SP>NAME
+
+TAG POS=1 TYPE=INPUT:TEXT FORM=ID:documentForm ATTR=ID:invoice_date CONTENT={{!COL3}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=ID:documentForm ATTR=NAME:invoice_goods[0][title] CONTENT={{!COL4}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=ID:documentForm ATTR=NAME:invoice_goods[0][quantity] CONTENT={{!COL5}}
+TAG POS=1 TYPE=SELECT FORM=ID:documentForm ATTR=NAME:invoice_goods[0][type] CONTENT=2
+TAG POS=1 TYPE=INPUT:TEXT FORM=ID:documentForm ATTR=NAME:invoice_goods[0][price] CONTENT={{!COL6}}
+
+TAG POS=1 TYPE=SELECT FORM=ID:documentForm ATTR=NAME:payment_type CONTENT=2
+TAG POS=1 TYPE=INPUT:TEXT FORM=ID:documentForm ATTR=NAME:bank_new_name CONTENT=Your<SP>Bank<SP>Name
+TAG POS=1 TYPE=INPUT:TEXT FORM=ID:documentForm ATTR=NAME:bank[iban] CONTENT=YOURBANKIBAN
+TAG POS=1 TYPE=INPUT:TEXT FORM=ID:documentForm ATTR=NAME:bank[bic] CONTENT=BANKBIC
+ONDIALOG POS=1 BUTTON=OK CONTENT=
+TAG POS=1 TYPE=INPUT:BUTTON FORM=ID:documentForm ATTR=ID:saveinvoice
